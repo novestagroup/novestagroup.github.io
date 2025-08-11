@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generate 5★ Review – Novesta</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin:0; padding:24px; background:#f7f7f8; }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 0 0 16px; }
+    .card { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:20px; box-shadow:0 2px 16px rgba(0,0,0,.06); }
+    .buttons { display:flex; gap:12px; margin-top:16px; }
+    button { padding:12px 16px; border-radius:10px; border:1px solid #e5e7eb; background:#111; color:#fff; font-weight:600; cursor:pointer; }
+    button.secondary { background:#fff; color:#111; }
+    button:disabled { opacity:.6; cursor:not-allowed; }
+    #review { white-space: pre-wrap; line-height:1.5; font-size:16px; }
+    .hint { color:#666; font-size:13px; margin-top:10px; }
+    .badge { display:inline-block; background:#111; color:#fff; border-radius:999px; padding:4px 10px; font-size:12px; margin-left:8px; }
+    .bar { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="bar">
+      <h1>Novesta 5★ Review Generator</h1>
+      <span id="remaining" class="badge">…</span>
+    </div>
+
+    <div class="card">
+      <div id="review">Click “Generate” to get a fresh 5-star review. After you press “Copy”, this review is removed for everyone.</div>
+      <div class="buttons">
+        <button id="genBtn">Generate</button>
+        <button id="copyBtn" class="secondary" disabled>Copy & Reserve</button>
+      </div>
+      <div class="hint" id="hint"></div>
+    </div>
+  </div>
+
+  <script>
+    // 🔗 Replace with your Apps Script web app URL
+    const API = "https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_URL/exec";
+
+    const reviewEl = document.getElementById('review');
+    const genBtn = document.getElementById('genBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const hint = document.getElementById('hint');
+    const remaining = document.getElementById('remaining');
+
+    let current = { id: null, text: "" };
+
+    async function getRemaining() {
+      try {
+        const res = await fetch(API + "?action=count", { cache: "no-store" });
+        const data = await res.json();
+        remaining.textContent = data.ok ? `${data.remaining} left` : '…';
+      } catch (e) {
+        remaining.textContent = '…';
+      }
+    }
+
+    async function generate() {
+      hint.textContent = '';
+      copyBtn.disabled = true;
+      current = { id: null, text: "" };
+      reviewEl.textContent = 'Finding a fresh review…';
+
+      try {
+        const res = await fetch(API + "?action=next", { cache: "no-store" });
+        const data = await res.json();
+        if (data.ok && !data.empty) {
+          current.id = data.id;
+          current.text = data.review;
+          reviewEl.textContent = data.review;
+          copyBtn.disabled = false;
+          await getRemaining();
+        } else {
+          reviewEl.textContent = 'No reviews left. Please ask admin to add more.';
+          copyBtn.disabled = true;
+        }
+      } catch (err) {
+        reviewEl.textContent = 'Error fetching review. Try again.';
+      }
+    }
+
+    async function copyAndReserve() {
+      if (!current.id || !current.text) return;
+      try {
+        await navigator.clipboard.writeText(current.text);
+      } catch (err) {
+        // Fallback for older browsers
+        const ta = document.createElement('textarea');
+        ta.value = current.text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+
+      hint.textContent = 'Copied! Reserving this review so it won’t appear again…';
+
+      try {
+        const form = new FormData();
+        form.append('id', String(current.id));
+        const res = await fetch(API, { method: 'POST', body: form });
+        const data = await res.json();
+        if (data.ok) {
+          hint.textContent = 'Reserved. This review is now hidden for everyone.';
+          copyBtn.disabled = true;
+          current = { id: null, text: "" };
+          await getRemaining();
+        } else {
+          hint.textContent = 'Someone used this at the same time. Please generate another.';
+        }
+      } catch (err) {
+        hint.textContent = 'Could not reserve. Try generating a new one.';
+      }
+    }
+
+    genBtn.addEventListener('click', generate);
+    copyBtn.addEventListener('click', copyAndReserve);
+    getRemaining();
+  </script>
+</body>
+</html>
