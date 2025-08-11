@@ -3,57 +3,171 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Generate 5★ Review – Novesta</title>
+  <title>Novesta – 5★ Review Generator</title>
+  <meta name="description" content="Generate a fresh 5-star review, copy it, and paste on Google Reviews for Novesta Group." />
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin:0; padding:24px; background:#f7f7f8; }
-    .wrap { max-width: 720px; margin: 0 auto; }
-    h1 { font-size: 22px; margin: 0 0 16px; }
-    .card { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:20px; box-shadow:0 2px 16px rgba(0,0,0,.06); }
-    .buttons { display:flex; gap:12px; margin-top:16px; }
-    button { padding:12px 16px; border-radius:10px; border:1px solid #e5e7eb; background:#111; color:#fff; font-weight:600; cursor:pointer; }
-    button.secondary { background:#fff; color:#111; }
-    button:disabled { opacity:.6; cursor:not-allowed; }
-    #review { white-space: pre-wrap; line-height:1.5; font-size:16px; }
-    .hint { color:#666; font-size:13px; margin-top:10px; }
-    .badge { display:inline-block; background:#111; color:#fff; border-radius:999px; padding:4px 10px; font-size:12px; margin-left:8px; }
-    .bar { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+    :root{
+      --bg:#0b0f14;
+      --card:#0f1620cc;
+      --text:#eaf2ff;
+      --muted:#a9b6c7;
+      --accent:#6ee7ff;
+      --accent-2:#a78bfa;
+      --border:#1e293b;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --error:#ef4444;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text); background: radial-gradient(1200px 800px at 10% 10%, #172133 0%, transparent 70%), radial-gradient(1000px 700px at 100% 0%, #1a2a40 0%, transparent 70%), var(--bg);
+    }
+    .wrap{max-width:880px; margin:0 auto; padding:28px}
+    .hero{
+      display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:18px;
+    }
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{
+      width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow:0 8px 30px #6ee7ff33, inset 0 0 20px #ffffff22;
+    }
+    h1{font-size:22px; margin:0;}
+    .badge{
+      display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border:1px solid var(--border);
+      border-radius:999px; color:var(--muted); background:#0f172acc; font-size:12px;
+    }
+    .grid{display:grid; grid-template-columns:1.2fr .8fr; gap:18px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .card{
+      background:var(--card); border:1px solid var(--border); border-radius:18px; padding:20px;
+      box-shadow:0 10px 40px #00000055, inset 0 1px 0 #ffffff10; backdrop-filter: blur(10px);
+    }
+    .title{font-size:16px; margin:0 0 10px; color:#d7e6ff}
+    #review{white-space:pre-wrap; line-height:1.6; font-size:16px; color:#eaf2ff; min-height:120px}
+    .buttons{display:flex; flex-wrap:wrap; gap:12px; margin-top:16px}
+    button,.linkbtn{
+      appearance:none; border:1px solid var(--border); border-radius:12px; padding:12px 16px; font-weight:700;
+      background:#0b1220; color:#fff; cursor:pointer; transition:transform .04s ease, box-shadow .2s ease, background .2s ease;
+      box-shadow:0 4px 20px #00000040, inset 0 1px 0 #ffffff10;
+    }
+    button:hover,.linkbtn:hover{transform:translateY(-1px)}
+    button.primary{background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#0b0f14; border-color:#0000}
+    button.secondary{background:#0b1220}
+    button.ghost{background:transparent}
+    button:disabled{opacity:.5; cursor:not-allowed; transform:none}
+    .hint{color:var(--muted); font-size:13px; margin-top:10px}
+    .steps{display:flex; gap:12px; margin-top:10px; flex-wrap:wrap}
+    .step{flex:1; min-width:180px; background:#0b1220; border:1px dashed var(--border); border-radius:12px; padding:12px}
+    .step b{display:block; margin-bottom:6px; color:#dce7ff}
+    .cta{
+      display:flex; flex-direction:column; gap:14px
+    }
+    .big{
+      display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none;
+      padding:14px 16px; border-radius:14px; background:linear-gradient(135deg, #22d3ee, #a78bfa);
+      color:#0b0f14; font-weight:900; letter-spacing:.3px; border:0; box-shadow:0 10px 40px #6ee7ff33;
+    }
+    .small{font-size:12px; color:var(--muted)}
+    .toast{
+      position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:#0b1220; color:#fff;
+      border:1px solid var(--border); border-radius:12px; padding:10px 14px; box-shadow:0 10px 30px #0008; display:none;
+    }
+    .kbd{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; background:#0b1220; border:1px solid var(--border); padding:2px 6px; border-radius:6px}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="bar">
-      <h1>Novesta 5★ Review Generator</h1>
-      <span id="remaining" class="badge">…</span>
+    <div class="hero">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Novesta 5★ Review Generator</h1>
+          <div class="badge"><span id="remaining">…</span> left</div>
+        </div>
+      </div>
     </div>
 
-    <div class="card">
-      <div id="review">Click “Generate” to get a fresh 5-star review. After you press “Copy”, this review is removed for everyone.</div>
-      <div class="buttons">
-        <button id="genBtn">Generate</button>
-        <button id="copyBtn" class="secondary" disabled>Copy & Reserve</button>
-      </div>
-      <div class="hint" id="hint"></div>
+    <div class="grid">
+      <!-- Generator -->
+      <section class="card">
+        <h2 class="title">Your review</h2>
+        <div id="review">Click <b>Generate</b> to get a fresh 5-star review. After you press <b>Copy & Reserve</b>, this review won’t appear for anyone else.</div>
+        <div class="buttons">
+          <button id="genBtn" class="primary">⚡ Generate</button>
+          <button id="copyBtn" class="secondary" disabled>📋 Copy & Reserve</button>
+          <a id="openBtn" class="linkbtn ghost" target="_blank" rel="noopener">↗ Open Google Review Page</a>
+        </div>
+        <div class="hint" id="hint"></div>
+
+        <div class="steps">
+          <div class="step">
+            <b>1) Generate</b>
+            Tap <span class="kbd">Generate</span> for a new, unused review.
+          </div>
+          <div class="step">
+            <b>2) Copy</b>
+            Click <span class="kbd">Copy & Reserve</span> — it copies the text and locks it for you.
+          </div>
+          <div class="step">
+            <b>3) Paste & Post</b>
+            Hit <span class="kbd">Open Google Review Page</span> and paste the review in the text box there.
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA & Info -->
+      <aside class="card cta">
+        <h2 class="title">Post your review here</h2>
+        <a class="big" id="reviewLink" href="https://g.page/r/CQo8pe9HyhYeEBM/review" target="_blank" rel="noopener">
+          ⭐ Open Google Review Page
+        </a>
+        <div class="small">
+          Tip: after pasting, feel free to add your own words or emojis to make it personal before you submit.
+        </div>
+        <div class="small">
+          Need another line? Generate again. Once copied, a review is removed from the pool to avoid duplicates.
+        </div>
+      </aside>
     </div>
   </div>
 
+  <div class="toast" id="toast">Copied to clipboard</div>
+
   <script>
-    // 🔗 Replace with your Apps Script web app URL
+    // API endpoint (Apps Script Web App URL ending with /exec)
     const API = "https://script.google.com/macros/s/AKfycby0o_oETDhpXCcicTv-BArsz-9ghW5YBUp5pXIFDFyhkyTh9iMDcyivRXKi1i5B9FCPog/exec";
 
-    const reviewEl = document.getElementById('review');
-    const genBtn = document.getElementById('genBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const hint = document.getElementById('hint');
-    const remaining = document.getElementById('remaining');
+    // Where to paste (Google review link)
+    const REVIEW_URL = "https://g.page/r/CQo8pe9HyhYeEBM/review";
+
+    const reviewEl   = document.getElementById('review');
+    const genBtn     = document.getElementById('genBtn');
+    const copyBtn    = document.getElementById('copyBtn');
+    const hint       = document.getElementById('hint');
+    const remaining  = document.getElementById('remaining');
+    const openBtn    = document.getElementById('openBtn');
+    const reviewLink = document.getElementById('reviewLink');
+    const toast      = document.getElementById('toast');
+
+    openBtn.href = REVIEW_URL;
+    reviewLink.href = REVIEW_URL;
 
     let current = { id: null, text: "" };
+
+    function showToast(msg){
+      toast.textContent = msg || 'Done';
+      toast.style.display = 'block';
+      setTimeout(()=> toast.style.display = 'none', 1600);
+    }
 
     async function getRemaining() {
       try {
         const res = await fetch(API + "?action=count", { cache: "no-store" });
         const data = await res.json();
-        remaining.textContent = data.ok ? `${data.remaining} left` : '…';
-      } catch (e) {
+        remaining.textContent = data.ok ? data.remaining : '…';
+      } catch {
         remaining.textContent = '…';
       }
     }
@@ -77,17 +191,17 @@
           reviewEl.textContent = 'No reviews left. Please ask admin to add more.';
           copyBtn.disabled = true;
         }
-      } catch (err) {
+      } catch {
         reviewEl.textContent = 'Error fetching review. Try again.';
       }
     }
 
     async function copyAndReserve() {
       if (!current.id || !current.text) return;
+      // Copy to clipboard
       try {
         await navigator.clipboard.writeText(current.text);
-      } catch (err) {
-        // Fallback for older browsers
+      } catch {
         const ta = document.createElement('textarea');
         ta.value = current.text;
         document.body.appendChild(ta);
@@ -95,23 +209,25 @@
         document.execCommand('copy');
         document.body.removeChild(ta);
       }
+      showToast('Copied to clipboard');
 
-      hint.textContent = 'Copied! Reserving this review so it won’t appear again…';
-
+      hint.textContent = 'Reserving this review so it won’t appear again…';
       try {
         const form = new FormData();
         form.append('id', String(current.id));
         const res = await fetch(API, { method: 'POST', body: form });
         const data = await res.json();
         if (data.ok) {
-          hint.textContent = 'Reserved. This review is now hidden for everyone.';
+          hint.textContent = 'Reserved. Now click “Open Google Review Page” and paste.';
           copyBtn.disabled = true;
           current = { id: null, text: "" };
           await getRemaining();
+          // Nudge user to the Google page
+          window.open(REVIEW_URL, '_blank', 'noopener');
         } else {
           hint.textContent = 'Someone used this at the same time. Please generate another.';
         }
-      } catch (err) {
+      } catch {
         hint.textContent = 'Could not reserve. Try generating a new one.';
       }
     }
