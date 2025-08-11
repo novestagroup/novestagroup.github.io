@@ -3,232 +3,130 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Novesta – 5★ Review Generator</title>
-  <meta name="description" content="Generate a fresh 5-star review, copy it, and paste on Google Reviews for Novesta Group." />
+  <title>Novesta – Easy 5★ Review</title>
   <style>
     :root{
-      --bg:#0b0f14;
-      --card:#0f1620cc;
-      --text:#eaf2ff;
-      --muted:#a9b6c7;
-      --accent:#6ee7ff;
-      --accent-2:#a78bfa;
-      --border:#1e293b;
-      --ok:#22c55e;
-      --warn:#f59e0b;
-      --error:#ef4444;
+      --bg:#f6f7fb; --card:#ffffff; --text:#111827; --muted:#6b7280;
+      --primary:#111827; --ring:#e5e7eb; --accent:#0ea5e9;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color:var(--text); background: radial-gradient(1200px 800px at 10% 10%, #172133 0%, transparent 70%), radial-gradient(1000px 700px at 100% 0%, #1a2a40 0%, transparent 70%), var(--bg);
+    body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--text)}
+    .wrap{max-width:720px;margin:0 auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    h1{font-size:20px;margin:0}
+    .pill{font-size:12px;color:var(--muted);border:1px solid var(--ring);padding:6px 10px;border-radius:999px}
+    .card{background:var(--card);border:1px solid var(--ring);border-radius:16px;padding:18px;box-shadow:0 8px 30px #0000000d}
+    .label{font-weight:600;margin-bottom:8px}
+    #review{min-height:110px;line-height:1.6;font-size:16px;background:#f9fafb;border:1px solid var(--ring);border-radius:12px;padding:14px}
+    .buttons{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+    button,a.btn{
+      appearance:none;border:1px solid var(--ring);border-radius:12px;padding:14px 16px;font-weight:700;cursor:pointer;
+      background:var(--primary);color:#fff;text-decoration:none;text-align:center;flex:1 1 180px
     }
-    .wrap{max-width:880px; margin:0 auto; padding:28px}
-    .hero{
-      display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:18px;
-    }
-    .brand{display:flex; align-items:center; gap:12px}
-    .logo{
-      width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow:0 8px 30px #6ee7ff33, inset 0 0 20px #ffffff22;
-    }
-    h1{font-size:22px; margin:0;}
-    .badge{
-      display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border:1px solid var(--border);
-      border-radius:999px; color:var(--muted); background:#0f172acc; font-size:12px;
-    }
-    .grid{display:grid; grid-template-columns:1.2fr .8fr; gap:18px}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
-    .card{
-      background:var(--card); border:1px solid var(--border); border-radius:18px; padding:20px;
-      box-shadow:0 10px 40px #00000055, inset 0 1px 0 #ffffff10; backdrop-filter: blur(10px);
-    }
-    .title{font-size:16px; margin:0 0 10px; color:#d7e6ff}
-    #review{white-space:pre-wrap; line-height:1.6; font-size:16px; color:#eaf2ff; min-height:120px}
-    .buttons{display:flex; flex-wrap:wrap; gap:12px; margin-top:16px}
-    button,.linkbtn{
-      appearance:none; border:1px solid var(--border); border-radius:12px; padding:12px 16px; font-weight:700;
-      background:#0b1220; color:#fff; cursor:pointer; transition:transform .04s ease, box-shadow .2s ease, background .2s ease;
-      box-shadow:0 4px 20px #00000040, inset 0 1px 0 #ffffff10;
-    }
-    button:hover,.linkbtn:hover{transform:translateY(-1px)}
-    button.primary{background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#0b0f14; border-color:#0000}
-    button.secondary{background:#0b1220}
-    button.ghost{background:transparent}
-    button:disabled{opacity:.5; cursor:not-allowed; transform:none}
-    .hint{color:var(--muted); font-size:13px; margin-top:10px}
-    .steps{display:flex; gap:12px; margin-top:10px; flex-wrap:wrap}
-    .step{flex:1; min-width:180px; background:#0b1220; border:1px dashed var(--border); border-radius:12px; padding:12px}
-    .step b{display:block; margin-bottom:6px; color:#dce7ff}
-    .cta{
-      display:flex; flex-direction:column; gap:14px
-    }
-    .big{
-      display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none;
-      padding:14px 16px; border-radius:14px; background:linear-gradient(135deg, #22d3ee, #a78bfa);
-      color:#0b0f14; font-weight:900; letter-spacing:.3px; border:0; box-shadow:0 10px 40px #6ee7ff33;
-    }
-    .small{font-size:12px; color:var(--muted)}
-    .toast{
-      position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:#0b1220; color:#fff;
-      border:1px solid var(--border); border-radius:12px; padding:10px 14px; box-shadow:0 10px 30px #0008; display:none;
-    }
-    .kbd{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; background:#0b1220; border:1px solid var(--border); padding:2px 6px; border-radius:6px}
+    button.secondary{background:#fff;color:var(--text)}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .hint{margin-top:10px;color:var(--muted);font-size:14px}
+    .steps{display:grid;grid-template-columns:1fr;gap:8px;margin-top:14px;color:var(--muted);font-size:14px}
+    .step{background:#f9fafb;border:1px dashed var(--ring);border-radius:12px;padding:10px}
+    .ok{color:#10b981} .warn{color:#d97706} .err{color:#ef4444}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="hero">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <h1>Novesta 5★ Review Generator</h1>
-          <div class="badge"><span id="remaining">…</span> left</div>
-        </div>
+    <header>
+      <h1>Novesta – Easy 5★ Review</h1>
+      <div class="pill"><span id="remaining">…</span> reviews left</div>
+    </header>
+
+    <div class="card">
+      <div class="label">Your review text</div>
+      <div id="review">Tap <b>Generate</b> to get a fresh review.</div>
+
+      <div class="buttons">
+        <button id="genBtn">Generate</button>
+        <button id="copyBtn" class="secondary" disabled>Copy & Open Google Reviews</button>
       </div>
-    </div>
 
-    <div class="grid">
-      <!-- Generator -->
-      <section class="card">
-        <h2 class="title">Your review</h2>
-        <div id="review">Click <b>Generate</b> to get a fresh 5-star review. After you press <b>Copy & Reserve</b>, this review won’t appear for anyone else.</div>
-        <div class="buttons">
-          <button id="genBtn" class="primary">⚡ Generate</button>
-          <button id="copyBtn" class="secondary" disabled>📋 Copy & Reserve</button>
-          <a id="openBtn" class="linkbtn ghost" target="_blank" rel="noopener">↗ Open Google Review Page</a>
-        </div>
-        <div class="hint" id="hint"></div>
+      <div class="hint" id="hint"></div>
 
-        <div class="steps">
-          <div class="step">
-            <b>1) Generate</b>
-            Tap <span class="kbd">Generate</span> for a new, unused review.
-          </div>
-          <div class="step">
-            <b>2) Copy</b>
-            Click <span class="kbd">Copy & Reserve</span> — it copies the text and locks it for you.
-          </div>
-          <div class="step">
-            <b>3) Paste & Post</b>
-            Hit <span class="kbd">Open Google Review Page</span> and paste the review in the text box there.
-          </div>
-        </div>
-      </section>
-
-      <!-- CTA & Info -->
-      <aside class="card cta">
-        <h2 class="title">Post your review here</h2>
-        <a class="big" id="reviewLink" href="https://g.page/r/CQo8pe9HyhYeEBM/review" target="_blank" rel="noopener">
-          ⭐ Open Google Review Page
-        </a>
-        <div class="small">
-          Tip: after pasting, feel free to add your own words or emojis to make it personal before you submit.
-        </div>
-        <div class="small">
-          Need another line? Generate again. Once copied, a review is removed from the pool to avoid duplicates.
-        </div>
-      </aside>
+      <div class="steps">
+        <div class="step"><b>1.</b> Press <b>Generate</b> → you’ll get a new unused review.</div>
+        <div class="step"><b>2.</b> Press <b>Copy & Open Google Reviews</b> → text is copied & reserved.</div>
+        <div class="step"><b>3.</b> Paste on the Google page and submit your 5★ review.</div>
+      </div>
     </div>
   </div>
 
-  <div class="toast" id="toast">Copied to clipboard</div>
-
   <script>
-    // API endpoint (Apps Script Web App URL ending with /exec)
+    // 🔗 Your Apps Script Web App URL
     const API = "https://script.google.com/macros/s/AKfycby0o_oETDhpXCcicTv-BArsz-9ghW5YBUp5pXIFDFyhkyTh9iMDcyivRXKi1i5B9FCPog/exec";
-
-    // Where to paste (Google review link)
+    // 🔗 Where to paste
     const REVIEW_URL = "https://g.page/r/CQo8pe9HyhYeEBM/review";
 
-    const reviewEl   = document.getElementById('review');
-    const genBtn     = document.getElementById('genBtn');
-    const copyBtn    = document.getElementById('copyBtn');
-    const hint       = document.getElementById('hint');
-    const remaining  = document.getElementById('remaining');
-    const openBtn    = document.getElementById('openBtn');
-    const reviewLink = document.getElementById('reviewLink');
-    const toast      = document.getElementById('toast');
+    const reviewEl  = document.getElementById('review');
+    const genBtn    = document.getElementById('genBtn');
+    const copyBtn   = document.getElementById('copyBtn');
+    const hint      = document.getElementById('hint');
+    const remaining = document.getElementById('remaining');
 
-    openBtn.href = REVIEW_URL;
-    reviewLink.href = REVIEW_URL;
+    let current = { id:null, text:"" };
 
-    let current = { id: null, text: "" };
-
-    function showToast(msg){
-      toast.textContent = msg || 'Done';
-      toast.style.display = 'block';
-      setTimeout(()=> toast.style.display = 'none', 1600);
+    async function getRemaining(){
+      try{
+        const r = await fetch(API + "?action=count", {cache:"no-store"});
+        const d = await r.json();
+        remaining.textContent = d.ok ? d.remaining : "…";
+      }catch{ remaining.textContent = "…"; }
     }
 
-    async function getRemaining() {
-      try {
-        const res = await fetch(API + "?action=count", { cache: "no-store" });
-        const data = await res.json();
-        remaining.textContent = data.ok ? data.remaining : '…';
-      } catch {
-        remaining.textContent = '…';
-      }
-    }
-
-    async function generate() {
-      hint.textContent = '';
+    async function generate(){
+      hint.textContent = "";
       copyBtn.disabled = true;
-      current = { id: null, text: "" };
-      reviewEl.textContent = 'Finding a fresh review…';
-
-      try {
-        const res = await fetch(API + "?action=next", { cache: "no-store" });
-        const data = await res.json();
-        if (data.ok && !data.empty) {
-          current.id = data.id;
-          current.text = data.review;
-          reviewEl.textContent = data.review;
+      reviewEl.textContent = "Finding a fresh review…";
+      try{
+        const r = await fetch(API + "?action=next", {cache:"no-store"});
+        const d = await r.json();
+        if(d.ok && !d.empty){
+          current.id = d.id; current.text = d.review;
+          reviewEl.textContent = d.review;
           copyBtn.disabled = false;
           await getRemaining();
-        } else {
-          reviewEl.textContent = 'No reviews left. Please ask admin to add more.';
-          copyBtn.disabled = true;
+        }else{
+          reviewEl.textContent = "No reviews left. Please contact admin.";
         }
-      } catch {
-        reviewEl.textContent = 'Error fetching review. Try again.';
+      }catch{
+        reviewEl.textContent = "Could not load a review. Try again.";
       }
     }
 
-    async function copyAndReserve() {
-      if (!current.id || !current.text) return;
-      // Copy to clipboard
-      try {
+    async function copyAndReserve(){
+      if(!current.id || !current.text) return;
+      // Copy
+      try{
         await navigator.clipboard.writeText(current.text);
-      } catch {
+      }catch{
         const ta = document.createElement('textarea');
-        ta.value = current.text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
+        ta.value = current.text; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
       }
-      showToast('Copied to clipboard');
+      hint.innerHTML = "<span class='ok'>Copied.</span> Reserving for you…";
 
-      hint.textContent = 'Reserving this review so it won’t appear again…';
-      try {
-        const form = new FormData();
-        form.append('id', String(current.id));
-        const res = await fetch(API, { method: 'POST', body: form });
-        const data = await res.json();
-        if (data.ok) {
-          hint.textContent = 'Reserved. Now click “Open Google Review Page” and paste.';
+      // Reserve
+      try{
+        const form = new FormData(); form.append('id', String(current.id));
+        const r = await fetch(API, {method:"POST", body:form});
+        const d = await r.json();
+        if(d.ok){
+          hint.innerHTML = "<span class='ok'>Reserved.</span> Opening Google Reviews…";
           copyBtn.disabled = true;
-          current = { id: null, text: "" };
+          current = { id:null, text:"" };
           await getRemaining();
-          // Nudge user to the Google page
-          window.open(REVIEW_URL, '_blank', 'noopener');
-        } else {
-          hint.textContent = 'Someone used this at the same time. Please generate another.';
+          window.open(REVIEW_URL, "_blank", "noopener");
+        }else{
+          hint.innerHTML = "<span class='warn'>Someone just used this one.</span> Please press Generate again.";
         }
-      } catch {
-        hint.textContent = 'Could not reserve. Try generating a new one.';
+      }catch{
+        hint.innerHTML = "<span class='err'>Could not reserve. Try Generate again.</span>";
       }
     }
 
